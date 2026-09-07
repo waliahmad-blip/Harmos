@@ -1,0 +1,784 @@
+/* ═══════════════════════════════════════════════════════════════════
+   HARMOS · FIRST LIGHT — chronolattice.css · v1.0
+   The ChronoLattice design system: violet lattice + quantum glass.
+   Consumed by film.html and every chapter page.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── tokens ─────────────────────────────────────────── */
+:root{
+  --void:#070818;          /* the deep field            */
+  --panel:#0C1022;         /* glass panels base          */
+  --violet:#8FA8FF;        /* the lattice                */
+  --cyan:#44EDF7;          /* the proof                  */
+  --gold:#F5B84A;          /* the human / care layer     */
+  --red:#FF5A5F;           /* the Synthetic              */
+  --ivory:#F4F1E8;         /* text                       */
+  --lux:#E0AAFF;           /* luxury arm                 */
+  --blue:#7FB8FF;          /* industry arm               */
+  --line:rgba(244,241,232,.10);
+  --glass-bg:rgba(255,255,255,.055);
+  --glass-br:rgba(255,255,255,.20);
+  --glow-v:rgba(143,168,255,.55);
+  --glow-c:rgba(68,237,247,.45);
+  --font-d:'Space Grotesk','Inter',sans-serif;
+  --font-b:'Inter',system-ui,sans-serif;
+}
+
+/* ── base ───────────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--void);color:var(--ivory);font-family:var(--font-b);
+     -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--violet);outline-offset:3px;border-radius:8px}
+::selection{background:var(--violet);color:var(--void)}
+.cl-h,.cl-h1,.cl-h2,.cl-eyebrow,.cl-num,.cl-btn,.cl-rail-node{font-family:var(--font-d)}
+
+/* ── the stage ──────────────────────────────────────── */
+#clStage{position:fixed;inset:0;height:100dvh;overflow:hidden;perspective:1200px}
+#clFx{position:absolute;inset:0;z-index:1}           /* canvas: all scene animation */
+#clAtmo{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+
+/* lattice atmosphere — two drifting grid layers + aurora */
+.cl-grid{position:absolute;inset:-20%;
+  background-image:
+    linear-gradient(rgba(143,168,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(143,168,255,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(75% 65% at 55% 42%,#000 25%,transparent 100%);
+  animation:clGridDrift 60s linear infinite}
+.cl-grid.far{background-size:128px 128px;opacity:.6;animation-duration:110s;animation-direction:reverse}
+@keyframes clGridDrift{to{transform:translate(64px,64px)}}
+.cl-blob{position:absolute;width:52vw;height:52vw;border-radius:50%;filter:blur(90px);opacity:.34}
+.cl-blob.v{background:radial-gradient(circle,#5B4DFF,transparent 70%);left:-14%;top:-18%;animation:clB1 16s ease-in-out infinite alternate}
+.cl-blob.c{background:radial-gradient(circle,#00C6FF,transparent 70%);right:-16%;top:2%;animation:clB2 19s ease-in-out infinite alternate}
+.cl-blob.p{background:radial-gradient(circle,#C86DD7,transparent 70%);left:16%;bottom:-28%;animation:clB3 17s ease-in-out infinite alternate}
+@keyframes clB1{to{transform:translate(8vw,6vh) scale(1.14)}}
+@keyframes clB2{to{transform:translate(-9vw,9vh) scale(.9)}}
+@keyframes clB3{to{transform:translate(9vw,-7vh) scale(1.1)}}
+.cl-vignette{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(120% 92% at 50% 8%,transparent 40%,rgba(0,0,0,.58) 100%)}
+.cl-grain{position:fixed;inset:-50%;z-index:4;pointer-events:none;opacity:.045;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:clGrain 8s steps(10) infinite}
+@keyframes clGrain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-4%)}60%{transform:translate(-3%,-3%)}80%{transform:translate(4%,4%)}100%{transform:translate(0,0)}}
+@media(max-width:700px){.cl-grain{display:none}}
+
+/* ── preloader: the first coordinate ignites ────────── */
+#clPreloader{position:fixed;inset:0;z-index:100;background:var(--void);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+#clPreloader .cl-ember{width:74px;height:74px;position:relative;display:grid;place-items:center}
+#clPreloader .cl-ember img{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 18px var(--glow-c));animation:clEmber 1.6s ease-in-out infinite alternate}
+#clPreloader .cl-ember::before{content:'';position:absolute;inset:-14px;border-radius:50%;
+  border:1px dashed rgba(68,237,247,.5);animation:clSpin 6s linear infinite}
+@keyframes clEmber{from{transform:scale(.94);filter:drop-shadow(0 0 10px var(--glow-c))}
+                   to{transform:scale(1.06);filter:drop-shadow(0 0 26px var(--glow-c))}}
+@keyframes clSpin{to{transform:rotate(360deg)}}
+#clPreloader .cl-plabel{font-family:var(--font-d);font-size:11px;letter-spacing:.42em;
+  color:var(--cyan);text-transform:uppercase}
+#clPreloader .cl-pbar{width:200px;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+#clPreloader .cl-pbar i{display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));box-shadow:0 0 12px var(--glow-c)}
+
+/* ── header chrome ──────────────────────────────────── */
+.cl-head{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;
+  justify-content:space-between;padding:clamp(14px,2.6vw,24px) clamp(18px,4vw,42px)}
+.cl-logo{display:flex;align-items:center;gap:11px;user-select:none;cursor:pointer}
+.cl-logo img{height:32px;width:auto;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 12px rgba(68,237,247,.35))}
+.cl-logo .cl-word{font-family:var(--font-d);font-weight:700;font-size:18px;letter-spacing:.08em}
+.cl-logo .cl-word em{font-style:normal;color:var(--cyan)}
+.cl-head-right{display:flex;align-items:center;gap:10px}
+.cl-chip{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,241,232,.55);
+  border:1px solid var(--line);padding:8px 14px;border-radius:99px}
+.cl-chip .on{color:var(--cyan)}
+.cl-iconbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:15px;transition:.3s;color:rgba(244,241,232,.7)}
+.cl-iconbtn:hover{border-color:var(--violet);color:var(--violet);box-shadow:0 0 18px rgba(143,168,255,.3)}
+.cl-iconbtn.on{border-color:var(--cyan);color:var(--cyan)}
+
+/* ── the narration glass (COMPLETED — resumes from cut) ── */
+.cl-narr{position:relative;z-index:5;max-width:600px;justify-self:center;
+  background:var(--glass-bg);border:1px solid var(--glass-br);border-radius:26px;
+  padding:clamp(22px,3.2vw,42px);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 18px 50px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.24);
+  overflow:hidden}
+.cl-narr::after{content:'';position:absolute;top:-120%;left:-60%;width:42%;height:340%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.15),transparent);
+  transform:rotate(16deg);animation:clSweep 7s ease-in-out infinite;pointer-events:none}
+@keyframes clSweep{0%,58%{left:-60%}88%,100%{left:170%}}
+.cl-narr.cl-hot{border-color:rgba(68,237,247,.45);box-shadow:0 18px 60px rgba(0,0,0,.5),0 0 34px rgba(68,237,247,.18),inset 0 1px 0 rgba(255,255,255,.28)}
+
+/* chapter heading stack */
+.cl-actbadge{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-d);
+  font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--violet);
+  border:1px solid rgba(143,168,255,.35);border-radius:99px;padding:6px 14px;margin-bottom:14px}
+.cl-actbadge i{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor;
+  animation:clPulseDot 2.2s infinite}
+@keyframes clPulseDot{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.cl-chnum{font-family:var(--font-d);font-weight:700;font-size:clamp(36px,4.4vw,56px);line-height:1;
+  color:transparent;-webkit-text-stroke:1.5px rgba(143,168,255,.55)}
+.cl-kicker{margin-top:8px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan)}
+.cl-chtitle{font-family:var(--font-d);font-weight:700;font-size:clamp(23px,2.9vw,36px);line-height:1.08;margin-top:6px}
+
+/* the narration beat — word-by-word reveal (engine staggers .w spans) */
+.cl-beat{margin-top:18px;font-size:clamp(13.5px,1.55vw,16.5px);line-height:1.72;
+  color:rgba(244,241,232,.86);min-height:5.8em}
+.cl-beat .w{display:inline-block;opacity:0;transform:translateY(14px) rotateX(-30deg)}
+.cl-beat b,.cl-beat strong{color:var(--cyan);font-weight:600}
+.cl-beat em{font-style:normal;color:var(--violet)}
+
+/* beat navigation */
+.cl-beatnav{display:flex;align-items:center;gap:14px;margin-top:22px}
+.cl-bbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:16px;color:rgba(244,241,232,.7);transition:.28s}
+.cl-bbtn:hover{border-color:var(--violet);color:var(--violet);box-shadow:0 0 16px rgba(143,168,255,.3)}
+.cl-bdots{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.cl-bdots i{width:6px;height:6px;border-radius:50%;background:rgba(244,241,232,.16);
+  transition:.3s;cursor:pointer}
+.cl-bdots i:hover{background:rgba(143,168,255,.6)}
+.cl-bdots i.seen{background:rgba(143,168,255,.4)}
+.cl-bdots i.on{background:var(--cyan);box-shadow:0 0 10px var(--glow-c);transform:scale(1.3)}
+.cl-hint{margin-top:13px;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(244,241,232,.35)}
+
+/* ── the visual column (canvas + DOM overlays) ───────── */
+.cl-visual{position:relative;z-index:5;height:min(58vh,520px);width:100%;
+  transform-style:preserve-3d}
+.cl-visual canvas{position:absolute;inset:0;width:100%;height:100%}
+.cl-vtag{position:absolute;font-family:var(--font-d);font-size:10px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--cyan);border:1px solid rgba(68,237,247,.4);
+  border-radius:99px;padding:6px 16px;background:rgba(7,8,24,.65);backdrop-filter:blur(6px);
+  white-space:nowrap;opacity:0;z-index:4}
+.cl-vtag.gold{color:var(--gold);border-color:rgba(245,184,74,.45)}
+.cl-vtag.red{color:var(--red);border-color:rgba(255,90,95,.45)}
+.cl-vtag.violet{color:var(--violet);border-color:rgba(143,168,255,.45)}
+
+/* flying stat callouts (stat-* beats) */
+.cl-stat{position:absolute;pointer-events:none;text-align:center;opacity:0;z-index:4}
+.cl-stat .cl-num{font-family:var(--font-d);font-weight:700;font-size:clamp(26px,3.6vw,44px);
+  color:var(--red);text-shadow:0 0 26px rgba(255,90,95,.45);line-height:1}
+.cl-stat.cyan .cl-num{color:var(--cyan);text-shadow:0 0 26px var(--glow-c)}
+.cl-stat.gold .cl-num{color:var(--gold);text-shadow:0 0 26px rgba(245,184,74,.45)}
+.cl-stat .cl-lbl{margin-top:6px;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(244,241,232,.55)}
+
+/* guardian cards (Chapter 4) */
+.cl-guard{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 18px;border-radius:18px;background:var(--glass-bg);
+  border:1px solid var(--glass-br);backdrop-filter:blur(12px);
+  font-family:var(--font-d);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  opacity:0;z-index:4;transition:border-color .3s}
+.cl-guard .cl-glyph{font-size:26px;filter:drop-shadow(0 0 12px currentColor)}
+.cl-guard small{font-family:var(--font-b);font-size:8.5px;letter-spacing:.12em;
+  color:rgba(244,241,232,.55);text-transform:none;text-align:center;max-width:150px;line-height:1.4}
+.cl-guard.on{border-color:currentColor;box-shadow:0 0 26px -6px currentColor}
+
+/* the 60-second timeline (Chapter 5) */
+.cl-timer{position:absolute;left:4%;right:4%;bottom:6%;height:3px;border-radius:3px;
+  background:rgba(244,241,232,.12);z-index:4}
+.cl-timer i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:3px;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));box-shadow:0 0 14px var(--glow-c)}
+.cl-tmarker{position:absolute;bottom:calc(6% + 14px);transform:translateX(-50%);
+  text-align:center;opacity:0;z-index:4}
+.cl-tmarker .cl-tl{font-family:var(--font-d);font-weight:700;font-size:15px;color:var(--cyan)}
+.cl-tmarker .cl-tt{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,241,232,.5);margin-top:2px}
+.cl-tmarker::after{content:'';position:absolute;left:50%;top:100%;width:1px;height:10px;
+  background:rgba(68,237,247,.4);margin-top:2px}
+.cl-heart{position:absolute;left:4%;right:4%;bottom:calc(6% + 52px);height:30px;opacity:.5;z-index:4}
+
+/* five-panel map labels (Chapter 6) */
+.cl-plabel{position:absolute;font-family:var(--font-d);font-size:9.5px;letter-spacing:.2em;
+  color:rgba(244,241,232,.6);text-transform:uppercase;opacity:0;z-index:4}
+.cl-verdict{position:absolute;font-family:var(--font-d);font-weight:700;
+  font-size:clamp(16px,2vw,24px);color:var(--gold);text-shadow:0 0 24px rgba(245,184,74,.5);
+  letter-spacing:.14em;opacity:0;z-index:4}
+.cl-alarm{position:absolute;inset:0;border:1.5px solid var(--red);border-radius:20px;
+  box-shadow:0 0 40px rgba(255,90,95,.35),inset 0 0 60px rgba(255,90,95,.12);
+  opacity:0;z-index:5;pointer-events:none}
+.cl-alarm span{position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-d);font-size:10px;letter-spacing:.3em;color:var(--red);text-transform:uppercase}
+
+/* receipt layer labels (Chapter 7) */
+.cl-rlayer{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--font-d);
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--violet);
+  border:1px solid rgba(143,168,255,.4);border-radius:99px;padding:5px 16px;
+  background:rgba(12,16,34,.75);opacity:0;z-index:4;white-space:nowrap}
+.cl-dial{position:absolute;font-family:var(--font-d);font-weight:700;font-size:13px;
+  letter-spacing:.24em;color:var(--gold);opacity:0;z-index:4}
+
+/* lane currency symbols (Chapter 8) */
+.cl-cur{position:absolute;font-family:var(--font-d);font-weight:700;font-size:19px;
+  color:var(--cyan);text-shadow:0 0 14px var(--glow-c);opacity:0;z-index:4}
+.cl-ledgerbar{position:absolute;left:8%;right:8%;bottom:5%;display:flex;align-items:center;
+  gap:10px;font-family:var(--font-d);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--cyan);opacity:0;z-index:4}
+.cl-ledgerbar i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--cyan))}
+
+/* seventy-worlds tooltip (Chapter 9) */
+.cl-worldtip{position:absolute;pointer-events:none;background:var(--glass-bg);
+  border:1px solid var(--glass-br);backdrop-filter:blur(14px);border-radius:14px;
+  padding:11px 16px;transform:translate(-50%,-130%);opacity:0;z-index:6;white-space:nowrap;
+  transition:opacity .25s}
+.cl-worldtip b{font-family:var(--font-d);font-size:13px;letter-spacing:.1em}
+.cl-worldtip small{display:block;margin-top:3px;font-size:10px;color:rgba(244,241,232,.6);letter-spacing:.06em}
+.cl-worldtip::after{content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--glass-br)}
+.cl-armtag{position:absolute;font-family:var(--font-d);font-size:9.5px;letter-spacing:.3em;
+  text-transform:uppercase;opacity:0;z-index:4}
+
+/* corridor labels (Chapter 10) */
+.cl-corridor{position:absolute;font-family:var(--font-d);font-size:9.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ivory);opacity:0;z-index:4;white-space:nowrap}
+.cl-corridor small{display:block;color:var(--cyan);font-size:8.5px;letter-spacing:.14em;margin-top:2px}
+
+/* phase meters + gates (Chapter 11) */
+.cl-meter{position:absolute;width:130px;opacity:0;z-index:4}
+.cl-meter .cl-mnum{font-family:var(--font-d);font-weight:700;font-size:12px;color:var(--cyan)}
+.cl-meter .cl-mlbl{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,241,232,.55);margin-top:2px}
+.cl-meter .cl-mbar{margin-top:5px;height:3px;border-radius:3px;background:rgba(244,241,232,.12);overflow:hidden}
+.cl-meter .cl-mbar i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 10px var(--glow-c)}
+.cl-gate{position:absolute;font-family:var(--font-d);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold);border:1px dashed rgba(245,184,74,.5);
+  border-radius:99px;padding:4px 12px;opacity:0;z-index:4;white-space:nowrap}
+
+/* money flow (Chapter 12) */
+.cl-flowtag{position:absolute;font-family:var(--font-d);font-size:9.5px;letter-spacing:.22em;
+  text-transform:uppercase;opacity:0;z-index:4}
+.cl-lever{position:absolute;width:12px;height:56px;border-radius:6px;
+  background:linear-gradient(180deg,#3a3f55,#1a1e30);border:1px solid var(--line);
+  box-shadow:0 0 18px rgba(255,90,95,.2);opacity:0;z-index:4}
+
+/* honesty ledger (Chapter 13) */
+.cl-hledger{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(300px,64vw);background:var(--glass-bg);border:1px solid var(--glass-br);
+  backdrop-filter:blur(16px);border-radius:20px;padding:18px 22px;opacity:0;z-index:4}
+.cl-hledger h4{font-family:var(--font-d);font-size:10.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:var(--cyan);text-align:center;margin-bottom:12px}
+.cl-hledger li{list-style:none;font-size:11px;line-height:1.5;color:rgba(244,241,232,.75);
+  padding:5px 0;border-bottom:1px dashed rgba(244,241,232,.1);opacity:0}
+.cl-hledger li:last-child{border-bottom:none}
+.cl-competitor{position:absolute;right:6%;top:10%;padding:12px 18px;border-radius:14px;
+  background:rgba(255,90,95,.08);border:1px solid rgba(255,90,95,.5);color:var(--red);
+  font-family:var(--font-d);font-weight:700;font-size:14px;letter-spacing:.14em;
+  opacity:0;z-index:4;transform-origin:center}
+
+/* quantum mask (Chapter 14) */
+.cl-genlabel{position:absolute;font-family:var(--font-d);font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--red);border:1px solid rgba(255,90,95,.45);
+  border-radius:99px;padding:5px 16px;opacity:0;z-index:4;background:rgba(7,8,24,.6)}
+
+/* vault + countdown (Chapter 15) */
+.cl-vaultyr{position:absolute;font-family:var(--font-d);font-weight:700;
+  font-size:clamp(18px,2.4vw,28px);color:var(--violet);text-shadow:0 0 22px rgba(143,168,255,.5);
+  opacity:0;z-index:4}
+.cl-count{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);
+  display:flex;gap:clamp(6px,1.8vw,18px);align-items:flex-start;z-index:4}
+.cl-cgrp{text-align:center}
+.cl-cd{font-family:var(--font-d);font-weight:700;font-size:clamp(34px,7.5vw,84px);line-height:1;
+  color:var(--violet);text-shadow:0 0 38px rgba(143,168,255,.5)}
+.cl-cgrp span{display:block;margin-top:7px;font-size:9px;letter-spacing:.34em;
+  color:rgba(244,241,232,.45);text-transform:uppercase}
+.cl-csep{font-size:clamp(20px,4.5vw,52px);color:rgba(244,241,232,.2);padding-top:clamp(2px,.7vw,8px)}
+
+/* the oath CTA (Chapter 16) */
+.cl-oath{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;
+  padding:16px 34px;border-radius:99px;font-family:var(--font-d);font-weight:700;
+  font-size:15px;letter-spacing:.06em;background:var(--cyan);color:#041016;
+  box-shadow:0 0 30px var(--glow-c);user-select:none;-webkit-user-select:none;
+  touch-action:none;transition:box-shadow .3s}
+.cl-oath:hover{box-shadow:0 0 44px rgba(68,237,247,.65)}
+.cl-oath .cl-ofill{position:absolute;left:0;top:0;bottom:0;width:0;
+  background:linear-gradient(90deg,rgba(143,168,255,.85),rgba(224,170,255,.85));pointer-events:none}
+.cl-oath .cl-olabel{position:relative;z-index:2}
+.cl-oath.lit{background:var(--violet);color:var(--void);box-shadow:0 0 50px rgba(143,168,255,.7)}
+
+/* ── chapter navigation (bottom rail) ────────────────── */
+.cl-nav{position:fixed;left:50%;transform:translateX(-50%);z-index:30;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;align-items:center;
+  gap:3px;padding:9px 14px;background:rgba(7,8,24,.74);border:1px solid var(--line);
+  border-radius:99px;backdrop-filter:blur(14px);max-width:94vw}
+.cl-nav i{width:9px;height:9px;border-radius:50%;background:rgba(244,241,232,.14);
+  border:1px solid transparent;cursor:pointer;position:relative;transition:.3s;flex-shrink:0}
+.cl-nav i:hover{transform:scale(1.3);background:rgba(143,168,255,.5)}
+.cl-nav i.on{background:var(--act-c,var(--cyan));border-color:var(--act-c,var(--cyan));
+  box-shadow:0 0 12px var(--act-c,var(--cyan))}
+.cl-nav i.seen{background:rgba(143,168,255,.35)}
+.cl-nav i::after{content:attr(data-name);position:absolute;bottom:calc(100% + 10px);left:50%;
+  transform:translateX(-50%) translateY(4px);font-family:var(--font-d);font-size:9px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--ivory);background:rgba(7,8,24,.9);
+  border:1px solid var(--line);border-radius:8px;padding:5px 10px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:.25s}
+.cl-nav i:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.cl-nav .cl-actsep{width:1px;height:14px;background:rgba(244,241,232,.18);margin:0 4px;flex-shrink:0}
+
+/* arrows + sound + menu */
+.cl-arrows{position:fixed;right:clamp(14px,3vw,30px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
+  z-index:30;display:flex;gap:10px}
+.cl-arrows button{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:17px;color:rgba(244,241,232,.7);transition:.28s}
+.cl-arrows button:hover{border-color:var(--violet);color:var(--violet);
+  box-shadow:0 0 18px rgba(143,168,255,.3)}
+
+/* chapter wipe — the lattice fold */
+.cl-wipe{position:fixed;inset:0;z-index:60;pointer-events:none;transform:scaleY(0);
+  transform-origin:bottom;
+  background:linear-gradient(180deg,rgba(143,168,255,.92),rgba(68,237,247,.88),rgba(143,168,255,.92))}
+.cl-wipe .cl-wgrid{position:absolute;inset:0;opacity:.35;
+  background-image:linear-gradient(rgba(7,8,24,.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(7,8,24,.5) 1px,transparent 1px);background-size:38px 38px}
+
+/* toast + cursor */
+#clToast{position:fixed;top:22px;left:50%;transform:translate(-50%,-160%);z-index:95;
+  background:var(--panel);border:1px solid var(--cyan);border-radius:99px;padding:12px 26px;
+  font-size:13.5px;box-shadow:0 0 34px rgba(68,237,247,.25)}
+.cl-curd,.cl-curr{position:fixed;top:0;left:0;z-index:90;pointer-events:none;border-radius:50%;
+  mix-blend-mode:screen}
+.cl-curd{width:6px;height:6px;background:var(--cyan);box-shadow:0 0 10px var(--glow-c)}
+.cl-curr{width:34px;height:34px;border:1px solid rgba(143,168,255,.55);
+  transition:width .25s,height .25s,border-color .25s}
+body.cl-hot .cl-curr{width:54px;height:54px;border-color:var(--cyan)}
+@media(pointer:coarse){.cl-curd,.cl-curr{display:none}}
+
+/* footer legal */
+.cl-legal{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);left:0;right:0;
+  font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,241,232,.22);
+  text-align:center;pointer-events:none}
+
+/* ── responsive ─────────────────────────────────────── */
+@media(max-width:920px){
+  .cl-scene{grid-template-columns:1fr;grid-template-rows:auto 1fr;
+    gap:10px;padding:78px 5vw 150px;overflow:hidden}
+  .cl-narr{padding:18px 20px;max-width:100%}
+  .cl-chnum{font-size:32px}
+  .cl-chtitle{font-size:clamp(20px,5.6vw,26px)}
+  .cl-beat{font-size:13.5px;min-height:4.4em}
+  .cl-visual{order:2;height:26vh;min-height:150px}
+  .cl-guard{padding:9px 12px;font-size:9.5px}
+  .cl-guard .cl-glyph{font-size:20px}
+  .cl-guard small{display:none}
+  .cl-nav i{width:7px;height:7px}
+  .cl-nav i::after{display:none}
+  .cl-cd{font-size:clamp(26px,10vw,44px)}
+  .cl-chip{display:none}
+  .cl-arrows{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
+}
+@media(max-height:560px){
+  .cl-visual{height:22vh}
+  .cl-beat{min-height:3.6em}
+}
+
+/* ── accessibility ──────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+  .cl-beat .w{opacity:1;transform:none}
+}
+
+/* ═══════════ FIX PACK · layout · cursor hints · glass core ═══════════ */
+
+/* 1 · the split layout is LAW: content left, animation right — always */
+.cl-scene{display:grid !important;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr) !important;
+  align-items:center !important;gap:2.5vw !important;height:100% !important;max-height:100% !important;
+  overflow:hidden !important;
+  padding:clamp(76px,10vh,104px) clamp(18px,5vw,64px) clamp(118px,16vh,140px) !important;
+  box-sizing:border-box !important}
+.cl-visual{height:100% !important;max-height:100% !important;min-height:0 !important;
+  position:relative !important;overflow:visible !important}
+.cl-narr{max-height:calc(100vh - 130px) !important;overflow-y:auto !important;overflow-x:hidden !important;
+  scrollbar-width:none;-ms-overflow-style:none}
+.cl-narr::-webkit-scrollbar{display:none}
+/* mobile keeps the split but stacks vertically WITHOUT cutting */
+@media(max-width:920px){
+  .cl-scene{grid-template-columns:1fr !important;grid-template-rows:auto minmax(0,1fr) !important;
+    gap:8px !important;padding:64px 4vw 138px !important}
+  .cl-narr{max-height:none !important;overflow:visible !important}
+  .cl-visual{min-height:34vh !important}
+}
+@media(max-height:560px){ .cl-visual{min-height:26vh} }
+
+/* 2 · narration scroll affordance — when the glass has more to show */
+.cl-narr::before{content:'';position:absolute;top:0;left:0;right:0;height:22px;z-index:3;
+  background:linear-gradient(180deg,var(--panel) 30%,transparent);opacity:0;pointer-events:none;
+  transition:opacity .3s}
+.cl-narr.cl-more::before,.cl-narr.cl-more::after{opacity:1}
+.cl-narr::after{background:linear-gradient(0deg,var(--panel) 30%,transparent);top:auto;bottom:0}
+
+/* 3 · cursor hint — the theme explains itself */
+#clHint{position:fixed;left:50%;transform:translate(-50%,14px);z-index:40;
+  display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:14px;
+  background:rgba(12,16,34,.82);border:1px solid rgba(68,237,247,.4);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#F4F1E8;font-size:12.5px;line-height:1.4;max-width:min(480px,88vw);
+  pointer-events:none;opacity:0;transition:opacity .35s,transform .35s;
+  box-shadow:0 8px 30px rgba(0,0,0,.4)}
+#clHint.on{opacity:1;transform:translate(-50%,0)}
+#clHint .cl-hglyph{flex-shrink:0;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(68,237,247,.1);border:1px solid rgba(68,237,247,.45);color:#44EDF7;font-size:16px}
+#clHint b{color:#44EDF7;font-weight:600}
+#clHint small{display:block;color:rgba(244,241,232,.55);font-size:10.5px;margin-top:1px}
+
+/* 4 · glass transition logo — never blank, always branded */
+.gw-core img{content:url('../img/harmos.png') !important;height:84px !important;width:auto !important;
+  object-fit:contain;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 30px rgba(68,237,247,.6)) drop-shadow(0 0 60px rgba(143,168,255,.3))}
+.gw-word{display:flex;align-items:center;gap:14px;justify-content:center}
+.gw-word img{height:44px;mix-blend-mode:screen;filter:drop-shadow(0 0 18px rgba(68,237,247,.5))}
+
+/* ═══ TERMS + TOOLTIP ═══ */
+.cl-term{position:relative;cursor:help;border-bottom:1px dashed rgba(68,237,247,.55);
+  outline:none}
+.cl-term .w{color:#9DEEF7}
+.cl-term::after{content:'\25C7';font-size:.62em;vertical-align:super;
+  margin-left:2px;color:rgba(68,237,247,.75)}
+.cl-term:hover,.cl-term:focus-visible{border-bottom-color:#44EDF7;
+  text-shadow:0 0 14px rgba(68,237,247,.4)}
+#clTermTip{position:fixed;z-index:70;max-width:min(360px,86vw);
+  background:rgba(12,16,34,.92);border:1px solid rgba(68,237,247,.45);
+  border-radius:14px;padding:11px 16px;backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);box-shadow:0 12px 36px rgba(0,0,0,.5);
+  font-size:12.5px;line-height:1.5;color:rgba(244,241,232,.9);
+  opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .25s,transform .25s}
+#clTermTip.on{opacity:1;transform:translateY(0)}
+#clTermTip .cl-tt-br{color:#44EDF7;font-weight:700}
+#clTermTip .cl-tt-m{color:#F4F1E8}
+
+/* ═══════════ FIX PACK 2 — layout law · mobile · readability ═══════════ */
+html,body{height:100vh;height:100dvh}
+
+/* THE GRID LAW: content left · animation right · nothing ever cut */
+.cl-scene{position:absolute !important;inset:0 !important;height:auto !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr) !important;
+  grid-template-rows:minmax(0,1fr) !important;
+  align-items:center !important;gap:2.5vw !important;
+  padding:clamp(68px,9vh,96px) clamp(16px,4.5vw,60px) clamp(110px,15vh,132px) !important;
+  overflow:hidden !important;box-sizing:border-box !important}
+.cl-narr{min-width:0 !important;min-height:0 !important;max-height:100% !important;
+  overflow-y:auto !important;overscroll-behavior:contain}
+.cl-visual{min-width:0 !important;min-height:0 !important;height:100% !important;max-height:100% !important}
+
+/* readability floors — no label ever below readable size */
+.cl-vtag{font-size:max(11px,1em)}
+.cl-stat .cl-lbl{font-size:max(10px,1em)}
+.cl-kicker{font-size:max(10.5px,1em)}
+.cl-hint{font-size:max(10px,1em)}
+.cl-beat{font-size:clamp(14px,1.6vw,17px);color:rgba(244,241,232,.9)}
+.cl-guard small{font-size:max(10px,1em)}
+
+/* ═══ MOBILE — the complete experience, trimmed not crippled ═══ */
+@media(max-width:920px){
+  .cl-scene{grid-template-columns:1fr !important;
+    grid-template-rows:minmax(0,auto) minmax(0,1fr) !important;
+    padding:58px 4vw 116px !important;gap:8px !important}
+  .cl-narr{max-height:46vh !important;padding:16px 18px !important}
+  .cl-visual{height:auto !important;min-height:34vh !important}
+  .cl-chnum{font-size:30px}
+  .cl-chtitle{font-size:clamp(19px,5.4vw,24px) !important}
+  .cl-beat{font-size:13.5px !important;line-height:1.62 !important;min-height:0 !important}
+  .cl-bbtn{width:38px;height:38px}
+  /* nav becomes a slim scrollable rail */
+  .cl-nav{max-width:92vw;overflow-x:auto;scrollbar-width:none;padding:7px 10px;gap:2px}
+  .cl-nav::-webkit-scrollbar{display:none}
+  .cl-nav i{width:6px !important;height:6px !important}
+  .cl-nav .cl-actsep{margin:0 2px;height:10px}
+  .cl-arrows{bottom:calc(env(safe-area-inset-bottom,0px) + 58px)}
+  .cl-arrows button{width:40px;height:40px}
+  #clHint{bottom:100px;font-size:11.5px;padding:8px 14px;max-width:88vw}
+  .cl-legal{display:none}
+  .cl-logo img{height:24px}
+  .cl-logo span{font-size:15px}
+  #clAuto{padding:0 12px;font-size:9px;letter-spacing:.12em;height:36px}
+  #clSound{width:34px;height:34px;font-size:13px}
+  .cl-chip{display:none}
+  .cl-stat .cl-num{font-size:clamp(22px,7vw,34px)}
+  .cl-count{gap:8px}
+  .cl-cd{font-size:clamp(28px,11vw,48px)}
+  .cl-guard{padding:10px 12px;font-size:9.5px}
+  .cl-guard small{display:none}
+}
+@media(max-width:920px) and (max-height:700px){
+  .cl-narr{max-height:40vh !important}
+  .cl-visual{min-height:28vh !important}
+}
+
+/* ═══ TRANSITION WOW — orbits · conic border · rays · chapter title ═══ */
+.gw-core{z-index:3}
+.gw-shards{z-index:2}
+.gw-orbit{position:absolute;left:50%;top:50%;border-radius:50%;
+  border:1px dashed rgba(68,237,247,.32);pointer-events:none;z-index:1;
+  transform:translate(-50%,-50%)}
+.gw-orbit.o1{width:52vmin;height:52vmin;animation:gwoSpin 9s linear infinite}
+.gw-orbit.o2{width:68vmin;height:68vmin;border-color:rgba(143,168,255,.22);
+  animation:gwoSpin 15s linear infinite reverse}
+.gw-orbit.o3{width:40vmin;height:40vmin;border-style:solid;
+  border-color:rgba(224,170,255,.18);animation:gwoSpin 11s linear infinite}
+@keyframes gwoSpin{from{transform:translate(-50%,-50%) rotate(0)}
+  to{transform:translate(-50%,-50%) rotate(360deg)}}
+.gw-orbit i{position:absolute;top:-4px;left:50%;width:7px;height:7px;border-radius:50%;
+  background:#44EDF7;box-shadow:0 0 14px #44EDF7,0 0 30px rgba(68,237,247,.6)}
+.gw-orbit.o2 i{background:#8FA8FF;box-shadow:0 0 14px #8FA8FF}
+.gw-orbit.o3 i{background:#E0AAFF;box-shadow:0 0 14px #E0AAFF}
+/* spinning conic light border on the logo core */
+.gw-core::before{content:'';position:absolute;inset:-2px;border-radius:28px;
+  background:conic-gradient(from 0deg,rgba(68,237,247,.7),transparent 28%,
+    rgba(143,168,255,.55) 55%,transparent 80%,rgba(68,237,247,.7));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:1.5px;
+  animation:gwoSpin 3.4s linear infinite;opacity:0;transition:opacity .4s;
+  z-index:5;pointer-events:none}
+#clGlassWipe.in .gw-core::before{opacity:1}
+#gwFx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+.gw-ch{position:absolute;left:50%;top:calc(50% + 17vmin);transform:translateX(-50%) translateY(18px);
+  text-align:center;z-index:4;opacity:0;pointer-events:none;
+  transition:opacity .4s .28s,transform .5s .28s cubic-bezier(.2,.9,.3,1.25)}
+#clGlassWipe.in .gw-ch{opacity:1;transform:translateX(-50%) translateY(0)}
+.gw-ch .gwc-n{font-family:'Space Grotesk';font-weight:700;font-size:11px;
+  letter-spacing:.5em;color:#44EDF7;text-indent:.5em}
+.gw-ch .gwc-t{font-family:'Space Grotesk';font-weight:700;font-size:clamp(17px,3vw,26px);
+  letter-spacing:.2em;color:#F4F1E8;margin-top:8px;
+  text-shadow:0 0 26px rgba(143,168,255,.55)}
+.gw-ch .gwc-a{font-size:9.5px;letter-spacing:.42em;color:rgba(244,241,232,.5);
+  margin-top:7px;text-transform:uppercase}
+
+/* reader comfort — no sweep over the text, ever */
+.cl-narr::after{animation:none!important}
+.cl-narr::before{animation:none!important}
+
+/* ═══ THE PLAIN CHANNEL — decoded signal strip ═══ */
+.cl-plain{position:relative;margin-top:14px;padding:10px 16px 11px 58px;
+  border-radius:14px;background:rgba(68,237,247,.05);
+  border:1px solid rgba(68,237,247,.26);
+  display:none;min-height:0}
+.cl-plain.on{display:block}
+.cl-plain .cl-pwave{position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+.cl-plain .cl-ptag{font-family:'Space Grotesk';font-size:8.5px;letter-spacing:.32em;
+  color:#44EDF7;display:block;margin-bottom:4px;text-transform:uppercase;opacity:.85}
+.cl-plain .cl-ptext{font-size:13px;line-height:1.5;color:rgba(244,241,232,.88)}
+@media(max-width:920px){
+  .cl-plain{padding:9px 12px 10px 50px;margin-top:10px}
+  .cl-plain .cl-ptext{font-size:12px}
+  .cl-plain .cl-ptag{font-size:7.5px}
+}
+
+/* ═══ THE INTERCEPT — threat/response duality (replaces plain strip) ═══ */
+.cl-plain{display:none!important}
+
+.cl-int{position:relative;margin-top:16px;display:none}
+.cl-int.on{display:block}
+
+.cl-int-idx{position:absolute;top:-9px;right:2px;font-family:'Space Grotesk';
+  font-size:8px;letter-spacing:.3em;color:rgba(244,241,232,.4);
+  background:#0C1022;padding:1px 10px;border-radius:99px;
+  border:1px solid rgba(244,241,232,.14);z-index:2}
+
+.cl-int-row{position:relative;padding:11px 16px 12px 44px;border-radius:14px;
+  opacity:0;transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.cl-int-row.prob{background:rgba(255,90,95,.055);border:1px solid rgba(255,90,95,.3);
+  border-left:3px solid rgba(255,90,95,.65);transform:translateX(-16px)}
+.cl-int-row.sol{background:rgba(245,184,74,.055);border:1px solid rgba(245,184,74,.32);
+  border-left:3px solid rgba(245,184,74,.7);transform:translateX(16px)}
+.cl-int.on .cl-int-row{opacity:1;transform:none}
+.cl-int.on .cl-int-row.sol{transition-delay:.22s}
+
+.cl-int-tag{font-family:'Space Grotesk';font-size:8.5px;letter-spacing:.3em;
+  display:flex;align-items:center;gap:7px;margin-bottom:5px;text-transform:uppercase}
+.cl-int-row.prob .cl-int-tag{color:#FF5A5F}
+.cl-int-row.sol .cl-int-tag{color:#F5B84A}
+.cl-int-tag i{width:6px;height:6px;border-radius:50%;background:currentColor;
+  box-shadow:0 0 9px currentColor;flex-shrink:0}
+
+.cl-int-text{font-size:13px;line-height:1.5;min-height:1.4em;display:block}
+.cl-int-row.prob .cl-int-text{color:rgba(255,188,191,.95)}
+.cl-int-row.sol .cl-int-text{color:rgba(250,224,178,.95)}
+
+.cl-int-link{height:16px;display:flex;justify-content:center;align-items:center;
+  position:relative;opacity:0;transition:opacity .4s .35s}
+.cl-int.on .cl-int-link{opacity:1}
+.cl-int-link::before{content:'';position:absolute;width:1.5px;height:100%;
+  background:linear-gradient(180deg,rgba(255,90,95,.55),rgba(245,184,74,.55))}
+.cl-int-link i{position:relative;width:8px;height:8px;transform:rotate(45deg);
+  background:#0C1022;border:1.5px solid rgba(245,184,74,.85);z-index:1}
+.cl-int-link.fire i{animation:intPulse .7s ease-out}
+@keyframes intPulse{0%{box-shadow:0 0 0 0 rgba(245,184,74,.6)}
+  100%{box-shadow:0 0 0 18px rgba(245,184,74,0)}}
+
+@media(max-width:920px){
+  .cl-int{margin-top:11px}
+  .cl-int-row{padding:9px 12px 10px 38px}
+  .cl-int-text{font-size:12px}
+  .cl-int-row.prob{transform:translateY(10px)}
+  .cl-int-row.sol{transform:translateY(10px)}
+}
+/* ═══ CALM MODE — nothing over the text ever moves a container ═══ */
+.cl-int-row.prob,.cl-int-row.sol{transform:none!important;
+  transition:opacity .9s ease!important}
+.cl-int.on .cl-int-row.sol{transition-delay:.4s!important}
+.cl-int-link{transition:opacity .9s ease .5s!important}
+.cl-plain,.cl-int{will-change:auto}
+
+/* ═══ THE QUANTUM FOLD — calm transition (replaces glass shatter) ═══ */
+#clGlassWipe,.gw-orbit,.gw-ch,#gwFx{display:none!important}
+
+#clFold{position:fixed;inset:0;z-index:65;pointer-events:none;
+  visibility:hidden;overflow:hidden;perspective:1200px}
+#clFold.on{visibility:visible}
+
+/* the fine grid — fades up gently */
+#clFold .f-grid{position:absolute;inset:0;opacity:0;transition:opacity .45s ease;
+  background-image:linear-gradient(rgba(143,168,255,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(143,168,255,.08) 1px,transparent 1px);
+  background-size:44px 44px;
+  transform:perspective(900px) rotateX(0deg) scale(1)}
+#clFold.on .f-grid{opacity:1}
+
+/* the two flaps fold toward each other along the diagonal */
+#clFold .f-flap{position:absolute;inset:0;background:#0A0E20;
+  transition:transform .55s cubic-bezier(.4,0,.2,1)}
+#clFold .f-a{clip-path:polygon(0 0,100% 0,100% 18%,18% 100%,0 100%);
+  transform-origin:top right;opacity:0}
+#clFold .f-b{clip-path:polygon(0 0,26% 0,100% 74%,100% 100%,0 100%);
+  transform-origin:bottom left;opacity:0}
+#clFold.on .f-a,#clFold.on .f-b{opacity:.94}
+#clFold.fold .f-a{transform:rotateZ(-4.5deg) rotateY(28deg)}
+#clFold.fold .f-b{transform:rotateZ(4.5deg) rotateY(-28deg)}
+#clFold.out .f-a{transform:rotateZ(-8deg) rotateY(55deg) translateY(-70%);opacity:0;
+  transition:transform .5s cubic-bezier(.5,0,.8,.5),opacity .4s}
+#clFold.out .f-b{transform:rotateZ(8deg) rotateY(-55deg) translateY(70%);opacity:0;
+  transition:transform .5s cubic-bezier(.5,0,.8,.5),opacity .4s}
+
+/* the crease line — logo rides it quietly */
+#clFold .f-crease{position:absolute;top:8%;bottom:8%;left:72%;width:1.5px;
+  background:linear-gradient(180deg,transparent,rgba(68,237,247,.85),transparent);
+  transform:skewX(-52deg);transform-origin:center;
+  opacity:0;transition:opacity .4s .1s,transform .55s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#clFold.on .f-crease{opacity:1}
+#clFold.fold .f-crease{transform:skewX(-52deg) translateX(-30%)}
+#clFold.out .f-crease{opacity:0;transition:opacity .3s}
+#clFold .f-crease img{height:44px;width:auto;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 16px rgba(68,237,247,.4));
+  transform:skewX(52deg);   /* counter-skew: logo stays upright */
+  opacity:0;transition:opacity .4s .18s}
+#clFold.on .f-crease img{opacity:.9}
+#clFold .f-ch{font-family:'Space Grotesk';font-weight:700;font-size:11px;
+  letter-spacing:.4em;color:#44EDF7;transform:skewX(52deg);
+  opacity:0;transition:opacity .4s .24s}
+#clFold.on .f-ch{opacity:.9}
+
+/* chapter label — bottom left, types in quietly */
+#clFold .f-label{position:absolute;left:5%;bottom:7%;
+  font-family:'Space Grotesk';font-weight:700;font-size:clamp(15px,2.4vw,24px);
+  letter-spacing:.3em;color:rgba(244,241,232,.9);
+  text-shadow:0 0 24px rgba(143,168,255,.35);
+  opacity:0;transform:translateX(14px);
+  transition:opacity .45s .2s,transform .5s .2s cubic-bezier(.2,.7,.3,1)}
+#clFold.on .f-label{opacity:1;transform:none}
+#clFold.out .f-label{opacity:0;transition:opacity .25s}
+
+@media(max-width:760px){
+  #clFold .f-crease{left:78%}
+  #clFold .f-crease img{height:34px}
+  #clFold .f-label{font-size:14px;letter-spacing:.2em;bottom:10%}
+}
+@media(prefers-reduced-motion:reduce){
+  #clFold .f-flap,#clFold .f-crease,#clFold .f-grid{transition:none!important}
+}
+
+/* ═══ THE QUANTUM FOLD — calm transition (replaces glass shatter) ═══ */
+#clGlassWipe,.gw-orbit,.gw-ch,#gwFx{display:none!important}
+
+#clFold{position:fixed;inset:0;z-index:65;pointer-events:none;
+  visibility:hidden;overflow:hidden;perspective:1200px}
+#clFold.on{visibility:visible}
+
+/* the fine grid — fades up gently */
+#clFold .f-grid{position:absolute;inset:0;opacity:0;transition:opacity .45s ease;
+  background-image:linear-gradient(rgba(143,168,255,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(143,168,255,.08) 1px,transparent 1px);
+  background-size:44px 44px;
+  transform:perspective(900px) rotateX(0deg) scale(1)}
+#clFold.on .f-grid{opacity:1}
+
+/* the two flaps fold toward each other along the diagonal */
+#clFold .f-flap{position:absolute;inset:0;background:#0A0E20;
+  transition:transform .55s cubic-bezier(.4,0,.2,1)}
+#clFold .f-a{clip-path:polygon(0 0,100% 0,100% 18%,18% 100%,0 100%);
+  transform-origin:top right;opacity:0}
+#clFold .f-b{clip-path:polygon(0 0,26% 0,100% 74%,100% 100%,0 100%);
+  transform-origin:bottom left;opacity:0}
+#clFold.on .f-a,#clFold.on .f-b{opacity:.94}
+#clFold.fold .f-a{transform:rotateZ(-4.5deg) rotateY(28deg)}
+#clFold.fold .f-b{transform:rotateZ(4.5deg) rotateY(-28deg)}
+#clFold.out .f-a{transform:rotateZ(-8deg) rotateY(55deg) translateY(-70%);opacity:0;
+  transition:transform .5s cubic-bezier(.5,0,.8,.5),opacity .4s}
+#clFold.out .f-b{transform:rotateZ(8deg) rotateY(-55deg) translateY(70%);opacity:0;
+  transition:transform .5s cubic-bezier(.5,0,.8,.5),opacity .4s}
+
+/* the crease line — logo rides it quietly */
+#clFold .f-crease{position:absolute;top:8%;bottom:8%;left:72%;width:1.5px;
+  background:linear-gradient(180deg,transparent,rgba(68,237,247,.85),transparent);
+  transform:skewX(-52deg);transform-origin:center;
+  opacity:0;transition:opacity .4s .1s,transform .55s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#clFold.on .f-crease{opacity:1}
+#clFold.fold .f-crease{transform:skewX(-52deg) translateX(-30%)}
+#clFold.out .f-crease{opacity:0;transition:opacity .3s}
+#clFold .f-crease img{height:44px;width:auto;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 16px rgba(68,237,247,.4));
+  transform:skewX(52deg);   /* counter-skew: logo stays upright */
+  opacity:0;transition:opacity .4s .18s}
+#clFold.on .f-crease img{opacity:.9}
+#clFold .f-ch{font-family:'Space Grotesk';font-weight:700;font-size:11px;
+  letter-spacing:.4em;color:#44EDF7;transform:skewX(52deg);
+  opacity:0;transition:opacity .4s .24s}
+#clFold.on .f-ch{opacity:.9}
+
+/* chapter label — bottom left, types in quietly */
+#clFold .f-label{position:absolute;left:5%;bottom:7%;
+  font-family:'Space Grotesk';font-weight:700;font-size:clamp(15px,2.4vw,24px);
+  letter-spacing:.3em;color:rgba(244,241,232,.9);
+  text-shadow:0 0 24px rgba(143,168,255,.35);
+  opacity:0;transform:translateX(14px);
+  transition:opacity .45s .2s,transform .5s .2s cubic-bezier(.2,.7,.3,1)}
+#clFold.on .f-label{opacity:1;transform:none}
+#clFold.out .f-label{opacity:0;transition:opacity .25s}
+
+@media(max-width:760px){
+  #clFold .f-crease{left:78%}
+  #clFold .f-crease img{height:34px}
+  #clFold .f-label{font-size:14px;letter-spacing:.2em;bottom:10%}
+}
+@media(prefers-reduced-motion:reduce){
+  #clFold .f-flap,#clFold .f-crease,#clFold .f-grid{transition:none!important}
+}
+
+/* ═══ QUANTUM FOLD v2 — in-place fold, no viewport motion ═══ */
+#clFold .f-flap{background:#0A0E20;transition:transform .8s cubic-bezier(.4,0,.2,1),opacity .8s ease}
+#clFold .f-a{clip-path:polygon(0 0,100% 0,100% 14%,14% 100%,0 100%);
+  transform-origin:top right;opacity:0;transform:none}
+#clFold .f-b{clip-path:polygon(0 0,22% 0,100% 78%,100% 100%,0 100%);
+  transform-origin:bottom left;opacity:0;transform:none}
+#clFold.on .f-a,#clFold.on .f-b{opacity:.92}
+/* fold inward — rotateY only, nothing translates */
+#clFold.fold .f-a{transform:rotateY(24deg)}
+#clFold.fold .f-b{transform:rotateY(-24deg)}
+/* dissolve in place — opacity only, zero movement */
+#clFold.out .f-a,#clFold.out .f-b{opacity:0;
+  transition:opacity .6s ease,transform .8s cubic-bezier(.4,0,.2,1)}
+#clFold.out .f-a{transform:rotateY(24deg)}
+#clFold.out .f-b{transform:rotateY(-24deg)}
+#clFold .f-grid{transition:opacity .8s ease}
+#clFold.out .f-grid{opacity:0;transition:opacity .6s}
+#clFold .f-crease{transition:opacity .5s .12s}
+#clFold.fold .f-crease{transform:skewX(-52deg)}
+#clFold.out .f-crease{opacity:0;transition:opacity .35s}
+#clFold .f-label{transition:opacity .6s .22s}
+#clFold.out .f-label{opacity:0;transition:opacity .3s}
+
+/* ═══ SLOW TEXT — reading pace, no shimmer ═══ */
+.cl-beat .w{transition:opacity 1.6s cubic-bezier(.25,.6,.35,1)!important;
+  transform:none!important}

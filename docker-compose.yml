@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: harmos-gateway
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HARMOS_HOST=0.0.0.0
+      - HARMOS_PORT=8000
+      - HARMOS_ENV=production
+      - HARMOS_LOG_LEVEL=info
+    volumes:
+      - harmos-data:/app/apps/gateway/data
+
+  web:
+    image: nginx:alpine
+    container_name: harmos-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./apps/web:/usr/share/nginx/html:ro
+    depends_on:
+      - gateway
+
+volumes:
+  harmos-data:

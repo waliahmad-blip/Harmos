@@ -1,0 +1,44 @@
+name: Harmos AI Sovereign Verification CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    name: Test Suite & Cryptographic Attestation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Cryptographic Core Test Suite (MLTA Layer 1)
+      run: |
+        python -m unittest packages/crypto_core/tests/test_crypto.py
+
+    - name: Run Gateway & Conclave Test Suite (MLTA Layer 2 & 3)
+      run: |
+        python -m unittest apps/gateway/tests/test_gateway.py
+
+    - name: Verify Code Manifest Generator & Deterministic Hash
+      run: |
+        python -c "from packages.crypto_core import generate_code_manifest; m = generate_code_manifest('.'); print('Verified manifest:', m['root_manifest_hash']); assert len(m['root_manifest_hash']) == 64"

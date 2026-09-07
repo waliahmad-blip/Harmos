@@ -1,0 +1,23 @@
+{
+  "name": "harmos-ai",
+  "version": "1.0.0",
+  "description": "Zero-Trust Execution, Verification, and Tamper-Evident Receipt Gateway for Autonomous AI Agents (USPTO Patent #63/915,788)",
+  "private": true,
+  "author": "Wali Ahmad",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "python -m uvicorn apps.gateway.main:app --host 127.0.0.1 --port 8000 --reload",
+    "start:gateway": "python -m uvicorn apps.gateway.main:app --host 127.0.0.1 --port 8000 --reload",
+    "test:crypto": "python packages/crypto_core/tests/test_crypto.py",
+    "test:gateway": "python apps/gateway/tests/test_gateway.py",
+    "test": "python packages/crypto_core/tests/test_crypto.py && python apps/gateway/tests/test_gateway.py",
+    "build:blueprint": "python build_master_blueprint.py",
+    "docker:build": "docker build -t harmos-ai-gateway:latest .",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
