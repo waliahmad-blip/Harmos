@@ -552,7 +552,7 @@
                 </div>
                 <pre class="code-pre" id="code-python"><code>from harmos import HarmosGateway
 
-gateway = HarmosGateway("http://127.0.0.1:8001")
+gateway = HarmosGateway("http://127.0.0.1:8002")
 
 # Wrap any agent tool function with Harmos zero-trust protection:
 @gateway.protect(tool_name="issue_refund")
@@ -571,7 +571,7 @@ result = process_refund(order_id="8812", amount=24.00)</code></pre>
                 </div>
                 <pre class="code-pre" id="code-ts"><code>import { HarmosGateway } from "@harmos/sdk";
 
-const harmos = new HarmosGateway({ origin: "http://127.0.0.1:8001" });
+const harmos = new HarmosGateway({ origin: "http://127.0.0.1:8002" });
 
 // Evaluate any agent tool invocation before dispatching:
 const verdict = await harmos.evaluate({

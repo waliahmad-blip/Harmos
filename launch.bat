@@ -5,10 +5,10 @@ echo            HARMOS AI // AUTONOMOUS AGENT VERIFICATION GATEWAY
 echo            USPTO Patent #63/915,788 -- Architect: Wali Ahmad
 echo ===============================================================================
 echo.
-echo [1/2] Launching browser to http://127.0.0.1:8001/ ...
-start http://127.0.0.1:8001/
+echo [1/2] Launching browser to http://127.0.0.1:8002/ ...
+start http://127.0.0.1:8002/
 echo.
-echo [2/2] Starting Unified Gateway and Cockpit HUD on port 8001...
+echo [2/2] Starting Unified Gateway and Cockpit HUD on port 8002...
 echo.
-python -m uvicorn apps.gateway.main:app --host 127.0.0.1 --port 8001 --reload
+python -m uvicorn apps.gateway.main:app --host 127.0.0.1 --port 8002 --reload
 pause

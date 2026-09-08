@@ -329,7 +329,7 @@ if os.path.isdir(assets_dir):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("HARMOS_PORT", 8001))
+    port = int(os.environ.get("HARMOS_PORT", 8002))
     host = os.environ.get("HARMOS_HOST", "127.0.0.1")
     uvicorn.run("main:app", host=host, port=port, reload=True)
 

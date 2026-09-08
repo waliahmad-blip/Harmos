@@ -4,7 +4,7 @@
 
 const API_BASE = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
   ? window.location.origin
-  : "http://127.0.0.1:8001";
+  : "http://127.0.0.1:8002";
 
 const SCENARIOS = {
   scen_refund_legit: {

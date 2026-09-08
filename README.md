@@ -265,10 +265,10 @@ python -m apps.gateway.main
 ### 4. Access the Cockpit HUD
 Open your browser to:
 ```
-http://127.0.0.1:8001
+http://127.0.0.1:8002
 ```
 - The FastAPI gateway automatically hosts the backend REST API and statically serves the Command Cockpit HUD from the root URL.
-- Live API documentation is available at `http://127.0.0.1:8001/docs`.
+- Live API documentation is available at `http://127.0.0.1:8002/docs`.
 
 ### 5. Running via Docker
 
@@ -297,7 +297,7 @@ The Harmos Gateway exposes high-throughput, low-latency REST endpoints:
 ### Example Verification Request
 
 ```bash
-curl -X POST http://127.0.0.1:8001/api/verify \\
+curl -X POST http://127.0.0.1:8002/api/verify \\
   -H "Content-Type: application/json" \\
   -d '{
     "agent_id": "agent-finance-01",
