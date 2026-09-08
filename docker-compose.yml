@@ -8,10 +8,10 @@ services:
     container_name: harmos-gateway
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8001:8001"
     environment:
       - HARMOS_HOST=0.0.0.0
-      - HARMOS_PORT=8000
+      - HARMOS_PORT=8001
       - HARMOS_ENV=production
       - HARMOS_LOG_LEVEL=info
     volumes:
